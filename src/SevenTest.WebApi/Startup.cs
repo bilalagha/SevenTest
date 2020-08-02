@@ -9,11 +9,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SevenTest.ApiRepository;
+using SevenTest.Business;
+using SevenTest.Core;
+using SevenTest.Core.Configuration;
 
 namespace SevenTest.WebApi
 {
     public class Startup
     {
+        ILogger _logger;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -25,6 +30,26 @@ namespace SevenTest.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddDistributedRedisCache(options =>
+            {
+                options.Configuration = Configuration.GetConnectionString("Redis");
+                options.InstanceName = "User_";
+            });
+
+            //var repository=new PersonApiRepository(Configuration["ApiUrl"]);
+            var cacheTimeoutsConfiguration = new CacheTimeoutsConfiguration();
+            Configuration.GetSection(CacheTimeoutsConfiguration.ConfigurationName).Bind(cacheTimeoutsConfiguration);
+            services.AddScoped(typeof(CacheTimeoutsConfiguration), p => { return cacheTimeoutsConfiguration; });
+            string url = Configuration["ApiUrl"];
+            services.AddScoped(typeof(IPersonRepository), p => { return new PersonApiRepository(url);  });           
+            services.AddScoped(typeof(IPersonService), typeof(PersonService));
+
+            
+
+     
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +68,12 @@ namespace SevenTest.WebApi
             {
                 endpoints.MapControllers();
             });
+        }
+
+
+        public static IPersonRepository PersonRepositoryFactory()
+        {
+            return new PersonApiRepository("");
         }
     }
 }

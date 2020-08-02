@@ -5,7 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SevenTest.ApiRepository\SevenTest.ApiRepository.csproj" />
+    <ProjectReference Include="..\SevenTest.Business\SevenTest.Business.csproj" />
+    <ProjectReference Include="..\SevenTest.Core\SevenTest.Core.csproj" />
   </ItemGroup>
 
 

@@ -9,16 +9,22 @@ using SevenTest.Core;
 
 namespace SevenTest.ApiRepository
 {
-    class PersonApiRepository: IPersonRepository
+    public class PersonApiRepository: IPersonRepository
     {
-        string _url = "https://f43qgubfhf.execute-api.ap-southeast-2.amazonaws.com/sampletest";
+       private readonly string _url;
+        public PersonApiRepository(string url)
+        {
+            _url = url;
+        }
 
         public async Task<List<Model.Person>> GetPersons()
         {
-            var client = new HttpClient();
-            var jsonBody = await client.GetAsync(_url);
-            var bodyContent = await jsonBody.Content.ReadAsStringAsync();
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<List<Person>>(bodyContent).Select(p => PersonTranportMapper(p)).ToList();
+            using (var client = new HttpClient())
+            {
+                var jsonBody = await client.GetAsync(_url);
+                var bodyContent = await jsonBody.Content.ReadAsStringAsync();
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<List<Person>>(bodyContent).Select(p => PersonTranportMapper(p)).ToList();
+            }
         }
 
         public Model.Person PersonTranportMapper(Person transportPerson)
