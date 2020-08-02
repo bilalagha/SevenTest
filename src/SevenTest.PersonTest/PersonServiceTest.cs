@@ -1,0 +1,91 @@
+using Moq;
+using NUnit.Framework;
+using SevenTest.Business;
+using SevenTest.Core;
+using SevenTest.Core.Model;
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
+using System.Threading.Tasks;
+
+namespace SevenTest.PersonTest
+{
+    public class PersonServiceTest
+    {
+        List<string> expectedString = new List<string>() { "Saleem", "Carla", "Steven", "Sanjeev" };
+        Mock<IPersonRepository> mockRepository;
+        [SetUp]
+        public void Setup()
+        {
+            List<Person> personList = new List<Person>()
+            {
+                new Person(){ Id = 1, Age = 44,  First = "Saleem", Last = "Shahzad", Gender = "M"},
+                new Person(){ Id = 2, Age = 28,  First = "Carla", Last = "Houston", Gender = "F"},
+                new Person(){ Id = 3, Age = 22,  First = "Ashwaria", Last = "Roy", Gender = "F"},
+                new Person(){ Id = 4, Age = 28,  First = "Steven", Last = "Rider", Gender = "M"},
+                new Person(){ Id = 5, Age = 19,  First = "Monali", Last = "Thakur", Gender = "F"},
+                new Person(){ Id = 6, Age = 28,  First = "Sanjeev", Last = "Kapoor", Gender = "M"}
+
+            }; ;
+
+            mockRepository = new Mock<IPersonRepository>();
+            mockRepository.Setup(repo => repo.GetPersons())
+                .Returns(Task.FromResult(personList));
+        }
+
+        [Test]
+        [TestCase(2, "Carla Houston")]
+        [TestCase(5, "Monali Thakur")]
+        [TestCase(6, "Sanjeev Kapoor")]        
+        public async Task GetFullNameById_Should_Match_Correct_FullName_From_Tupple(int inputAge, string outputFullName)
+        {
+            var personService = new PersonService(mockRepository.Object);
+            var result = await personService.GetFullNameById(inputAge);
+            Assert.AreEqual(outputFullName, result);
+        }
+
+        [Test]
+        public async Task GetFullNameById_Should_Throw_Exception_On_NonExisting_Id()
+        {           
+            var personService = new PersonService(mockRepository.Object);
+            //Assert.ThrowsAsync<Exception>(async () => await personService.GetFullNameById(42));  
+
+            try
+            {
+                await personService.GetFullNameById(42);
+                Assert.Fail($"Expected exception of type: {typeof(Exception)}");
+            }
+            catch (PersonNotFoundException)
+            {               
+                //Nothing To Do Just Test Passed Expected Exception thrown;
+            }            
+        }
+
+
+        [Test]        
+        public async Task GetFirstNameGreaterThenAge_Should_Return_Correct_FirstName_List()
+        {
+            var personService = new PersonService(mockRepository.Object);
+            var result = await personService.GetFirstNameGreaterThenAge(23);
+            Assert.AreEqual(new List<string>() { "Saleem", "Carla", "Steven", "Sanjeev" }, result);
+        }
+
+
+        [Test]
+        public async Task GetGendersPerAge_should_return_correct_data()
+        {
+            var personService = new PersonService(mockRepository.Object);
+            var result = await personService.GetGendersPerAge();
+
+            var expected = new List<AgeWiseGender>()
+                {
+                    new AgeWiseGender(){Age=19,NumberOfFemales=1, NumberOfMales=0 },
+                    new AgeWiseGender(){Age=22,NumberOfFemales=1, NumberOfMales=0 },
+                    new AgeWiseGender(){Age=28,NumberOfFemales=1,NumberOfMales=2 },
+                    new AgeWiseGender(){Age=44,NumberOfFemales=0, NumberOfMales=1 }
+
+                };
+            CollectionAssert.AreEqual(expected, result);
+        }        
+    }
+}
