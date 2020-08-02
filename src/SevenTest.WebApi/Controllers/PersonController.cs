@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SevenTest.Business;
 using SevenTest.Core;
+using SevenTest.Core.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,10 +36,14 @@ namespace SevenTest.WebApi.Controllers
                 return Ok(await _personService.GetFullNameById(id));
 
             }
-            catch
+            catch(PersonNotFoundException ex)
             {
-                _logger.LogError($"Person for id{id} not found");
+                _logger.LogError($"Person with id:{ex.PersonId} not found");
                 return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -45,16 +51,30 @@ namespace SevenTest.WebApi.Controllers
 
         public async Task<ActionResult<List<string>>> GetFirstNamesByAge([FromQuery] int age)
         {
-            _logger.LogInformation($"GetFirstNamesByAge Called for age {age}");
-            var result = await _personService.GetFirstNamesByAge(age);
-            return Ok(result);
+            try
+            {
+                _logger.LogInformation($"GetFirstNamesByAge Called for age {age}");
+                var result = await _personService.GetFirstNamesByAge(age);
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpGet("GetGenersPerAge")]
         public async Task<IActionResult> GetGenersPerAge()
         {
-            _logger.LogInformation($"GetGenersPerAge Called");
-            return Ok(await _personService.GetGendersPerAge());
+            try
+            {
+                _logger.LogInformation($"GetGenersPerAge Called");
+                return Ok(await _personService.GetGendersPerAge());
+            }
+            catch (Exception ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
         }
 
     }

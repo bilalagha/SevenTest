@@ -5,6 +5,7 @@ using NUnit.Framework;
 using SevenTest.Business;
 using SevenTest.Core;
 using SevenTest.Core.Configuration;
+using SevenTest.Core.Exceptions;
 using SevenTest.Core.Model;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace SevenTest.PersonTest
         Mock<IDistributedCache> _mockDistributedCache;
         Mock<Microsoft.Extensions.Logging.ILogger<PersonService>> _mockLogger;
         PersonService _personService;
-        //Mock<Configuration> mockCacheTimeoutConfiguration;
+        
         [SetUp]
         public void Setup()
         {
@@ -32,9 +33,8 @@ namespace SevenTest.PersonTest
                 new Person(){ Id = 5, Age = 19,  First = "Monali", Last = "Thakur", Gender = "F"},
                 new Person(){ Id = 6, Age = 23,  First = "Sanjeev", Last = "Kapoor", Gender = "M"}
 
-            }; ;
+            };
 
-           
             _mockDistributedCache = new Mock<IDistributedCache>();           
             _mockLogger = new Mock<Microsoft.Extensions.Logging.ILogger<PersonService>>();
             _mockRepository = new Mock<IPersonRepository>();
@@ -58,7 +58,7 @@ namespace SevenTest.PersonTest
         public async Task GetFullNameById_Should_Throw_Exception_On_NonExisting_Id()
         {
             var personService = _personService;
-            //Assert.ThrowsAsync<Exception>(async () => await personService.GetFullNameById(42));  
+            //Assert.ThrowsAsync<Exception>(async () => await personService.GetFullNameById(42));  // Not done in below fastion as this give no await warning
 
             try
             {

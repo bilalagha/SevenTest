@@ -6,12 +6,14 @@ using SevenTest.ApiRepository.Transport;
 using System.Linq;
 using System.Threading.Tasks;
 using SevenTest.Core;
+using SevenTest.Core.Exceptions;
+using System;
 
 namespace SevenTest.ApiRepository
 {
-    public class PersonApiRepository: IPersonRepository
+    public class PersonApiRepository : IPersonRepository
     {
-       private readonly string _url;
+        private readonly string _url;
         public PersonApiRepository(string url)
         {
             _url = url;
@@ -21,9 +23,18 @@ namespace SevenTest.ApiRepository
         {
             using (var client = new HttpClient())
             {
-                var jsonBody = await client.GetAsync(_url);
-                var bodyContent = await jsonBody.Content.ReadAsStringAsync();
-                return Newtonsoft.Json.JsonConvert.DeserializeObject<List<Person>>(bodyContent).Select(p => PersonTranportMapper(p)).ToList();
+                var rawBody = await client.GetAsync(_url);
+                var bodyContent = await rawBody.Content.ReadAsStringAsync();
+                try
+                {
+                    var personList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Person>>(bodyContent);
+                    return personList.Select(p => PersonTranportMapper(p)).ToList();
+
+                }
+                catch (Newtonsoft.Json.JsonReaderException jsonEx)
+                {
+                    throw new InvalidSourceDataFormat("Error Whie Paring Json Data for Person Api Repository Get Persons Method", "Api", _url, jsonEx);
+                }
             }
         }
 

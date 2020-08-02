@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using SevenTest.Core;
 using SevenTest.Core.Configuration;
+using SevenTest.Core.Exceptions;
 using SevenTest.Core.Model;
 using System;
 using System.Collections.Generic;
@@ -54,7 +55,7 @@ namespace SevenTest.Business
                 }
                 else
                 {
-                    throw new PersonNotFoundException($"person with specified Id: { id } does not exist");
+                    throw new PersonNotFoundException($"person with specified Id: { id } does not exist",id);
                 }
             }
             else
