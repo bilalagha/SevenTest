@@ -20,11 +20,11 @@ namespace SevenTest.PersonTest
             List<Person> personList = new List<Person>()
             {
                 new Person(){ Id = 1, Age = 44,  First = "Saleem", Last = "Shahzad", Gender = "M"},
-                new Person(){ Id = 2, Age = 28,  First = "Carla", Last = "Houston", Gender = "F"},
+                new Person(){ Id = 2, Age = 23,  First = "Carla", Last = "Houston", Gender = "F"},
                 new Person(){ Id = 3, Age = 22,  First = "Ashwaria", Last = "Roy", Gender = "F"},
-                new Person(){ Id = 4, Age = 28,  First = "Steven", Last = "Rider", Gender = "M"},
+                new Person(){ Id = 4, Age = 23,  First = "Steven", Last = "Rider", Gender = "M"},
                 new Person(){ Id = 5, Age = 19,  First = "Monali", Last = "Thakur", Gender = "F"},
-                new Person(){ Id = 6, Age = 28,  First = "Sanjeev", Last = "Kapoor", Gender = "M"}
+                new Person(){ Id = 6, Age = 23,  First = "Sanjeev", Last = "Kapoor", Gender = "M"}
 
             }; ;
 
@@ -66,8 +66,8 @@ namespace SevenTest.PersonTest
         public async Task GetFirstNameGreaterThenAge_Should_Return_Correct_FirstName_List()
         {
             var personService = new PersonService(mockRepository.Object);
-            var result = await personService.GetFirstNameGreaterThenAge(23);
-            Assert.AreEqual(new List<string>() { "Saleem", "Carla", "Steven", "Sanjeev" }, result);
+            var result = await personService.GetFirstNamesByAge(23);
+            Assert.AreEqual(new List<string>() { "Carla", "Steven", "Sanjeev" }, result);
         }
 
 
@@ -81,7 +81,7 @@ namespace SevenTest.PersonTest
                 {
                     new AgeWiseGender(){Age=19,NumberOfFemales=1, NumberOfMales=0 },
                     new AgeWiseGender(){Age=22,NumberOfFemales=1, NumberOfMales=0 },
-                    new AgeWiseGender(){Age=28,NumberOfFemales=1,NumberOfMales=2 },
+                    new AgeWiseGender(){Age=23,NumberOfFemales=1,NumberOfMales=2 },
                     new AgeWiseGender(){Age=44,NumberOfFemales=0, NumberOfMales=1 }
 
                 };

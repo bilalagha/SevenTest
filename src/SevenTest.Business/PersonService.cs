@@ -37,10 +37,10 @@ namespace SevenTest.Business
             }
         }
 
-        public async Task<List<string>> GetFirstNameGreaterThenAge(int age)
+        public async Task<List<string>> GetFirstNamesByAge(int age)
         {
             var persons = await GetPerson();
-            return persons.FindAll(p => p.Age > 23).Select(p => p.First).ToList();
+            return persons.FindAll(p => p.Age == age).Select(p => p.First).ToList();
         }
 
         public async Task<List<AgeWiseGender>> GetGendersPerAge()

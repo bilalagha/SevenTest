@@ -8,7 +8,7 @@ namespace SevenTest.Core
 {
     public interface IPersonService
     {
-        Task<List<string>> GetFirstNameGreaterThenAge(int age);
+        Task<List<string>> GetFirstNamesByAge(int age);
         Task<string> GetFullNameById(int id);
         Task<List<AgeWiseGender>> GetGendersPerAge();
     }
