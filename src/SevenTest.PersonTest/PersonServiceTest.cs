@@ -40,7 +40,7 @@ namespace SevenTest.PersonTest
             _mockRepository = new Mock<IPersonRepository>();
             _mockRepository.Setup(repo => repo.GetPersons())
                 .Returns(Task.FromResult(personList));
-            _personService = new PersonService(_mockLogger.Object, _mockRepository.Object, _mockDistributedCache.Object, new CacheTimeoutsConfiguration());
+            _personService = new PersonService(_mockLogger.Object, _mockRepository.Object, _mockDistributedCache.Object, new DistributedCacheConfiguration());
         }
 
         [Test]

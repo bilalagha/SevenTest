@@ -18,6 +18,9 @@ namespace SevenTest.WebApi
 {
     public class Startup
     {
+        const string SourceApiUrlKey= "SourceApiUrl";
+        const string SourceApiTimeoutInSecondsKey= "SourceApiTimeoutInSeconds";
+        const string DistributedCacheEnabledKey = "DistributedCacheEnabled";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -29,18 +32,23 @@ namespace SevenTest.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+           
 
-            services.AddDistributedRedisCache(options =>
+            var distributedCacheConfig = new DistributedCacheConfiguration();
+            Configuration.GetSection(DistributedCacheConfiguration.ConfigurationSectionKey).Bind(distributedCacheConfig);
+            if (distributedCacheConfig.DistributedCacheEnabled)
             {
-                options.Configuration = Configuration.GetConnectionString("Redis");
-                options.InstanceName = "User_";
-            });
+                services.AddDistributedRedisCache(options =>
+                {
+                    options.Configuration = Configuration.GetConnectionString("Redis");
+                    options.InstanceName = "User_";
+                });
+            }
 
-            var cacheTimeoutsConfiguration = new CacheTimeoutsConfiguration();
-            Configuration.GetSection(CacheTimeoutsConfiguration.ConfigurationName).Bind(cacheTimeoutsConfiguration);
-            services.AddScoped(typeof(CacheTimeoutsConfiguration), p => { return cacheTimeoutsConfiguration; });
-            string url = Configuration["ApiUrl"];
-            services.AddScoped(typeof(IPersonRepository), p => { return new PersonApiRepository(url);  });           
+            services.AddScoped(typeof(DistributedCacheConfiguration), p => { return distributedCacheConfig; });
+            string sourceApiUrl = Configuration[SourceApiUrlKey];
+            var sourceApiTimeout = long.Parse(Configuration[SourceApiTimeoutInSecondsKey]);
+            services.AddScoped(typeof(IPersonRepository), p => { return new PersonApiRepository(sourceApiUrl, sourceApiTimeout);  });           
             services.AddScoped(typeof(IPersonService), typeof(PersonService));
         }
 
@@ -60,12 +68,6 @@ namespace SevenTest.WebApi
             {
                 endpoints.MapControllers();
             });
-        }
-
-
-        public static IPersonRepository PersonRepositoryFactory()
-        {
-            return new PersonApiRepository("");
-        }
+        }      
     }
 }

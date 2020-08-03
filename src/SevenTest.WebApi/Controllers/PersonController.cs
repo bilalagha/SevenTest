@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace SevenTest.WebApi.Controllers
 {
 
@@ -41,10 +42,15 @@ namespace SevenTest.WebApi.Controllers
                 _logger.LogError($"Person with id:{ex.PersonId} not found");
                 return NotFound();
             }
-            catch (Exception ex)
+            catch (TimeoutException ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status504GatewayTimeout);
+            }
+            catch (Exception)
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
+          
         }
 
         [HttpGet("GetFirstNamesByAge")]
@@ -57,7 +63,11 @@ namespace SevenTest.WebApi.Controllers
                 var result = await _personService.GetFirstNamesByAge(age);
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch (TimeoutException ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status504GatewayTimeout);
+            }
+            catch (Exception ex)
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
@@ -70,6 +80,10 @@ namespace SevenTest.WebApi.Controllers
             {
                 _logger.LogInformation($"GetGenersPerAge Called");
                 return Ok(await _personService.GetGendersPerAge());
+            }
+            catch (TimeoutException ex)
+            {
+                return new StatusCodeResult(StatusCodes.Status504GatewayTimeout);
             }
             catch (Exception ex)
             {

@@ -21,27 +21,33 @@ namespace SevenTest.Business
         private IDistributedCache _cacheClient;
         private List<Person> _persons;
         private ILogger<PersonService> _logger;
-        private CacheTimeoutsConfiguration _cacheTimeouts;
+        private DistributedCacheConfiguration _distributedCacheConfig;
 
         public PersonService(ILogger<PersonService> logger, 
             IPersonRepository personRepository, 
             IDistributedCache cacheClient,
-            CacheTimeoutsConfiguration cacheTimeouts
+            DistributedCacheConfiguration distributedCacheConfig
 
             )
         {
             _personRepository = personRepository;
             _logger = logger;
             _cacheClient = cacheClient;
-            _cacheTimeouts = cacheTimeouts;
+            _distributedCacheConfig = distributedCacheConfig;
         }
 
         public async Task<string> GetFullNameById(int id)
         {
             _logger.LogInformation("Called PersonService.GetFullNameById for Id {id}");
             var cacheKey = $"GetFullNameById-Id:{id}";
-            var cachedData = await AsyncJsonCacheHelper.GetCache<string>(_cacheClient, cacheKey);
-            if (cachedData == null)
+            string cachedData = null;
+            // if(_distributedCacheConfig.DistributedCacheEnabled)
+
+            if (_distributedCacheConfig.DistributedCacheEnabled)
+            {
+                cachedData = await AsyncJsonCacheHelper.GetCache<string>(_cacheClient, cacheKey);
+            }
+            if (string.IsNullOrEmpty(cachedData))
             {
 
                 var persons = await GetPersons();
@@ -50,7 +56,10 @@ namespace SevenTest.Business
                 if (person != null)
                 {
                     var personFullName = $"{person.First} {person.Last}";
-                    await AsyncJsonCacheHelper.SaveCache<string>(_cacheClient, cacheKey, _cacheTimeouts.GetFullNameByIdTimeout, personFullName);
+                    if (_distributedCacheConfig.DistributedCacheEnabled)
+                    {
+                        await AsyncJsonCacheHelper.SaveCache<string>(_cacheClient, cacheKey, _distributedCacheConfig.GetFullNameByIdExpirationSeconds, personFullName);
+                    }
                     return personFullName;
                 }
                 else
@@ -67,13 +76,20 @@ namespace SevenTest.Business
         public async Task<List<string>> GetFirstNamesByAge(int age)
         {
             var cacheKey = $"GetFirstNamesByAge-age:{age}";
-            var cachedData = await AsyncJsonCacheHelper.GetCache<List<string>>(_cacheClient, cacheKey);
+            List<string> cachedData=null;
+            if (_distributedCacheConfig.DistributedCacheEnabled)
+            {
+                cachedData = await AsyncJsonCacheHelper.GetCache<List<string>>(_cacheClient, cacheKey);
+            }
             if (cachedData == null)
             {
                 _logger.LogInformation("Called PersonService.GetFirstNamesByAge for age {age}");
                 var persons = await GetPersons();                
                 var firstNames= persons.FindAll(p => p.Age == age).Select(p => p.First).ToList();
-                await AsyncJsonCacheHelper.SaveCache<List<string>>(_cacheClient, cacheKey, _cacheTimeouts.GetFirstNameByAgeTimeout, firstNames);
+                if (_distributedCacheConfig.DistributedCacheEnabled)
+                {
+                    await AsyncJsonCacheHelper.SaveCache<List<string>>(_cacheClient, cacheKey, _distributedCacheConfig.GetFirstNameByAgeExpirationSeconds, firstNames);
+                }
                 return firstNames;
 
             }
@@ -87,7 +103,11 @@ namespace SevenTest.Business
         {
             _logger.LogInformation("Called PersonService.GetGendersPerAge");
             var cacheKey = $"GetGendersPerAge";
-            var cachedData = await AsyncJsonCacheHelper.GetCache<List<AgeWiseGender>>(_cacheClient, cacheKey);
+            List<AgeWiseGender> cachedData=null;
+            if (_distributedCacheConfig.DistributedCacheEnabled)
+            {
+                cachedData = await AsyncJsonCacheHelper.GetCache<List<AgeWiseGender>>(_cacheClient, cacheKey);
+            }
             if (cachedData == null)
             {
                 var persons = await GetPersons();
@@ -101,7 +121,10 @@ namespace SevenTest.Business
                         NumberOfFemales = g.Count(p => p.Gender == FEMALE)
                     })
                      .ToList();
-                await AsyncJsonCacheHelper.SaveCache<List<AgeWiseGender>>(_cacheClient, cacheKey, _cacheTimeouts.GetGenderPerAgeTimeOut, ageWiseGender );
+                if (_distributedCacheConfig.DistributedCacheEnabled)
+                {
+                    await AsyncJsonCacheHelper.SaveCache<List<AgeWiseGender>>(_cacheClient, cacheKey, _distributedCacheConfig.GetGenderPerAgeExpirationSeconds, ageWiseGender);
+                }
                 return ageWiseGender;
             }
             else
@@ -120,7 +143,7 @@ namespace SevenTest.Business
 
                 if (_persons == null || !_persons.Any())
                 _persons = await _personRepository.GetPersons();
-                await AsyncJsonCacheHelper.SaveCache<List<Person>>(_cacheClient, cacheKey, _cacheTimeouts.GetPersonsTimeout, _persons);
+                await AsyncJsonCacheHelper.SaveCache<List<Person>>(_cacheClient, cacheKey, _distributedCacheConfig.GetPersonsExpirationSeconds, _persons);
                 return _persons;
             }
             else

@@ -22,12 +22,12 @@ namespace SevenTest.Business
             }
         }
 
-        public static async Task SaveCache<T>(IDistributedCache distributedCache, string cacheKey, long validUptoSeconds, T data)
+        public static async Task SaveCache<T>(IDistributedCache distributedCache, string cacheKey, long expireInSeconds, T data)
         {
             var jsonData = JsonConvert.SerializeObject(data);           
-            if(validUptoSeconds!=0)
+            if(expireInSeconds != 0)
             await distributedCache.SetStringAsync(cacheKey, jsonData,
-                new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(validUptoSeconds) });
+                new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expireInSeconds) });
         }
     }
 }
