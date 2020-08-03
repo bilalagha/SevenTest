@@ -19,6 +19,11 @@ If "DistributedCacheEnabled": true then redis server needs to be installed , Ple
     "Redis": "127.0.0.1:6379"
   },
 
+## Startup
+If Mutliple Statup project is not configured already :
+After opening the solution Go To Solution Property and select MultipProjects in statup projects
+Select Start in Action Drop Downs of SevenTest.WebApi and SevenTest.ConsoleOutput project and Click Apply So that Both project Run At A time
+
 
 ## Questions/Assumptions
 Some Question arose and I have developed is as per my assumption, I can fix it if after clearification found out that assumption are wrong.
