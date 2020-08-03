@@ -10,6 +10,16 @@ Repository for Seven West Media Technical assignment
 ## Resources
 For Assingment Document See : [Document Core Technical Assignment_20200228.docx]
 
+## Prerequisite
+The project is developed in Visual studio 2019 Preview , 
+dotNet core 3.1 is used
+Redis
+If "DistributedCacheEnabled": true then redis server needs to be installed , Please follow (https://riptutorial.com/redis/example/29962/installing-and-running-redis-server-on-windows) and configure 
+"ConnectionStrings": {
+    "Redis": "127.0.0.1:6379"
+  },
+
+
 ## Questions/Assumptions
 Some Question arose and I have developed is as per my assumption, I can fix it if after clearification found out that assumption are wrong.
 1. As the document example only shows Male and Female Gender in Response to Get Number of Gender Per Age so the solution is designed with the assumption that other gender should not be displayed
@@ -47,11 +57,7 @@ Following Configuration can be changed for Performance Tunning and changing the 
   "SourceApiUrl": "https://f43qgubfhf.execute-api.ap-southeast-2.amazonaws.com/sampletest"
 Also urs of Developed WebApi Project is 
 
-## Redis
-If "DistributedCacheEnabled": true then redis server needs to be installed , Please follow (https://riptutorial.com/redis/example/29962/installing-and-running-redis-server-on-windows) and configure 
-"ConnectionStrings": {
-    "Redis": "127.0.0.1:6379"
-  },
+
 
 
 
