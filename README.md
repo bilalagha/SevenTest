@@ -5,7 +5,7 @@ Repository for Seven West Media Technical assignment
 ## Authors
 
 * **Milos Nikolic** - *Assignment Sent By* 
-* **Bilal Agha** - *Solution Development* - [PurpleBooth](https://github.com/bilalagha)
+* **Bilal Agha** - *Solution Development* - [Bilal Agha](https://github.com/bilalagha)
 
 ## Resources
 For Assingment Document See : [Document Core Technical Assignment_20200228.docx]
@@ -33,12 +33,12 @@ Some Question arose and I have developed is as per my assumption, I can fix it i
 ## Structure of your application
 The Application is Structured in separate project for separation of concerns. and reusability 
 Projects
-	SevenTest.Core : Project is the base class library project which is used all of the project it contains common interface, Exceptions and Models, It also contain the IPersonRepository which enable the source to be changed
-	SevenTest.ApiRepository : is the project which contain is Api implementation of IPersonRepository (in future it can contain other api implementation of repositories if needed) which uses the api calls and relevant error and timeout handling
-	SevenTest.Business : is the project where main reusable business logic exists, it contains to conditional and filtration logic as well as Distributed cache handling if enabled through configuration, The main class is Business Service
-	SevenTest.WebApi : Project is the gateway to be utilised for output projects. as output project is not limited to console , WebApi project will serve as a versatile gateway for several kind of outputs , e.g Console, Web , Mobile, Smart Devices, Web Api Project is also handles the https errors specially timouts
-	SevenTest.ConsoleOutput : this project is for now the primary output project. The effort was given to have least amount of logic in the project the only logic this project have is necessary for the output and also functional reusablity is considered so that in an event the Parameters like Id, age is changed the project can handle it
-	SevenTest.PersonTest : The project contain unit test for the SevenTest.Business Project PersonService Class, for now 6 unit tests are done, more can be added to have better code coverage, moq is used for mocking the parameter required by service to have clear unit testing
+1.	SevenTest.Core : Project is the base class library project which is used all of the project it contains common interface, Exceptions and Models, It also contain the IPersonRepository which enable the source to be changed
+2.	SevenTest.ApiRepository : is the project which contain is Api implementation of IPersonRepository (in future it can contain other api implementation of repositories if needed) which uses the api calls and relevant error and timeout handling
+3. 	SevenTest.Business : is the project where main reusable business logic exists, it contains to conditional and filtration logic as well as Distributed cache handling if enabled through configuration, The main class is Business Service
+4.	SevenTest.WebApi : Project is the gateway to be utilised for output projects. as output project is not limited to console , WebApi project will serve as a versatile gateway for several kind of outputs , e.g Console, Web , Mobile, Smart Devices, Web Api Project is also handles the https errors specially timouts
+5.	SevenTest.ConsoleOutput : this project is for now the primary output project. The effort was given to have least amount of logic in the project the only logic this project have is necessary for the output and also functional reusablity is considered so that in an event the Parameters like Id, age is changed the project can handle it
+6.	SevenTest.PersonTest : The project contain unit test for the SevenTest.Business Project PersonService Class, for now 6 unit tests are done, more can be added to have better code coverage, moq is used for mocking the parameter required by service to have clear unit testing
 	
 
 
@@ -91,9 +91,9 @@ It is handled in Configuration/Performance Tunning section above
 6.	The functionality may not always be consumed in a console app.	: SevenTest.WebApi Project is used as web api gateway are wrapper to the personserver(SevenTest.Business), The Gateway can be used with any project .Net or any other technology to have the output as webapi is not a day most common way for reusable service architecture. e.g webapi can be client of Console, Web, Mobile, Smart Devices and other type of output projects.
 
 ## ToDo 
-More Unit Tests
-Page based retrieval may be used after further discussion
-More Error Handling
-Poly or alternative tool can be used to have policy base http response handeling and retries
-Generic IAsyncRepository can be implemented to have more reusablity.
-The question mentioned above can be cleared and implement the detail accordingly
+1.More Unit Tests
+2.Page based retrieval may be used after further discussion
+3.More Error Handling
+4.Poly or alternative tool can be used to have policy base http response handeling and retries
+5.Generic IAsyncRepository can be implemented to have more reusablity.
+6.The question mentioned above can be cleared and implement the detail accordingly
